@@ -1,3 +1,31 @@
+<?php
+$host = 'localhost';
+$port = '5432';
+$dbname = 'phpdatabase';
+$user = 'postgres';
+$pass = 'admin'; 
+
+$conn = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
+if (!$conn) {
+    die('Koneksi gagal: ' . pg_last_error());
+}
+
+pg_set_client_encoding($conn, 'UTF8');
+
+$sql_produk = "SELECT 
+                  \"nama_produk\"   AS \"NamaProduk\",
+                  \"harga\"         AS \"Harga\",
+                  \"diskon\"        AS \"Diskon\",
+                  \"gambar\"        AS \"Gambar\"
+              FROM \"TB_Produk\"
+              ORDER BY \"nama_produk\";";
+
+$result_produk = pg_query($conn, $sql_produk);
+if (!$result_produk) {
+    die('Query produk gagal: ' . pg_last_error($conn));
+}
+
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -10,7 +38,7 @@
 </head>
 <body>
 
-  <!-- HEADER -->
+  
   <header class="header" id="header">
     <nav class="nav container">
         <div class="nav__menu">
@@ -24,108 +52,30 @@
     </header>
   
 
-  <!-- DAFTAR PRODUK -->
   <section class="product-section">
     <div class="container">
-      <div class="card">
-        <img src="img/produk1.png" alt="Sofa Kain Putih">
-        <span class="discount">Diskon 15%</span>
-        <h3>Sofa Kain Putih</h3>
-        <p>Rp 1.700.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
 
-      <div class="card">
-        <img src="img/produk2.png" alt="Sofa Biru Tua">
-        <span class="discount">Diskon 10%</span>
-        <h3>Sofa Biru Tua</h3>
-        <p>Rp 5.400.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
+      <?php
+      while ($produk = pg_fetch_assoc($result_produk)) {
+      ?>
 
-      <div class="card">
-        <img src="img/produk3.png" alt="Kursi Nyaman">
-        <span class="discount">Diskon 15%</span>
-        <h3>Kursi Nyaman</h3>
-        <p>Rp 1.400.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
+        <div class="card">
+          <img src="<?php echo htmlspecialchars($produk['Gambar']); ?>" alt="<?php echo htmlspecialchars($produk['NamaProduk']); ?>">
+          <span class="discount">Diskon <?php echo htmlspecialchars($produk['Diskon']); ?>%</span>
+          <h3><?php echo htmlspecialchars($produk['NamaProduk']); ?></h3>
+          
+          <p>Rp <?php echo number_format($produk['Harga'], 0, ',', '.'); ?></p>
+          
+          <button class="cart-btn">Beli Sekarang</button>
+        </div>
 
-      <div class="card">
-        <img src="img/produk4.png" alt="Sofa Abu-Abu">
-        <span class="discount">Diskon 10%</span>
-        <h3>Sofa Abu-Abu</h3>
-        <p>Rp 4.600.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
+      <?php
+      } 
+      ?>
 
-      <div class="card">
-        <img src="img/produk5.png" alt="Lampu Mewah">
-        <span class="discount">Diskon 10%</span>
-        <h3>Lampu Mewah</h3>
-        <p>Rp 2.900.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
       </div>
-
-      <div class="card">
-        <img src="img/produk6.png" alt="Kursi Teras Kayu">
-        <span class="discount">Diskon 5%</span>
-        <h3>Kursi Teras Kayu</h3>
-        <p>Rp 1.200.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
-
-      <div class="card">
-        <img src="img/produk7.png" alt="Kursi Taman Klasik">
-        <span class="discount">Diskon 5%</span>
-        <h3>Kursi Taman Klasik</h3>
-        <p>Rp 1.100.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
-
-      <div class="card">
-        <img src="img/sofa.png" alt="Sofa Modern">
-        <span class="discount">Diskon 5%</span>
-        <h3>Sofa Modern</h3>
-        <p>Rp 3.200.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
-
-      <div class="card">
-        <img src="img/lemari.png" alt="Lemari Minimalis">
-        <span class="discount">Diskon 5%</span>
-        <h3>Lemari Minimalis</h3>
-        <p>Rp 2.800.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
-
-      <div class="card">
-        <img src="img/lampu.png" alt="Lampu Modern">
-        <span class="discount">Diskon 5%</span>
-        <h3>Lampu Modern</h3>
-        <p>Rp 1.600.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
-
-      <div class="card">
-        <img src="img/produk8.png" alt="Kursi Kayu Alami">
-        <span class="discount">Diskon 5%</span>
-        <h3>Kursi Kayu Alami</h3>
-        <p>Rp 1.000.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
-
-      <div class="card">
-        <img src="img/produk9.png" alt="Kursi Klasik">
-        <span class="discount">Diskon 5%</span>
-        <h3>Kursi Klasik</h3>
-        <p>Rp 1.200.000</p>
-        <button class="cart-btn">Beli Sekarang</button>
-      </div>
-    </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <div class="footer-container container">
       <div class="footer-content">
@@ -162,3 +112,6 @@
   <script src="script.js"></script>
 </body>
 </html>
+<?php
+pg_close($conn);
+?>
